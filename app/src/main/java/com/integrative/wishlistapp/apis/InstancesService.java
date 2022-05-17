@@ -57,7 +57,7 @@ public interface InstancesService {
             , @Query("userEmail") @NotNull String userEmail);
 
     @Headers({"Accept: application/json"})
-    @GET
+    @GET("/iob/instances/search/byName/{name}")
     @Nullable
     Call<List<InstanceBoundary>> searchInstancesByName(@Path("name") @NotNull String name
             , @Query("userDomain") @NotNull String userDomain
@@ -67,7 +67,7 @@ public interface InstancesService {
     );
 
     @Headers({"Accept: application/json"})
-    @GET
+    @GET( "/iob/instances/search/byType/{type}")
     @Nullable
     Call<List<InstanceBoundary>> searchInstancesByType(@Path("type") String type
             , @Query("userDomain") @NotNull String userDomain
@@ -77,7 +77,7 @@ public interface InstancesService {
     );
 
     @Headers({"Accept: application/json"})
-    @GET
+    @GET("/iob/instances/search/near/{lat}/{lng}/{distance}")
     @Nullable
     Call<List<InstanceBoundary>> searchInstancesByLocation(@Path("lat") @NotNull String lat
             , @Path("lng") @NotNull String lng

@@ -2,15 +2,45 @@ package com.integrative.wishlistapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Wishlist {
 
     @SerializedName("products")
-    private Product products[];
-    @SerializedName("totalPrice")
-    private double totalPrice;
-    @SerializedName("maximumBudget")
-    private double maximumBudget;
+    private List<Product> products;
     @SerializedName("description")
     private String description;
 
+    public Wishlist() {
+    }
+
+    public Wishlist(List<Product> products, String description) {
+        this.products = products;
+        this.description = description;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Wishlist{" +
+                "products:" + products +
+                ", description:\"" + description + '\"' +
+                '}';
+    }
 }

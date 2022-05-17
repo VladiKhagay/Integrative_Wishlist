@@ -14,18 +14,25 @@ import java.util.List;
 
 public class WishlistViewModel extends AndroidViewModel {
 
-
-    private static final String TAG = WishlistViewModel.class.getSimpleName();
-    private final Application application;
-    private final InstancesRepository repository;
-
+    private InstancesRepository repository;
     private LiveData<List<InstanceBoundary>> instances;
+    private LiveData<List<Wishlist>> wishlistsLiveData;
 
-    public WishlistViewModel(@NonNull InstancesRepository repository, @NonNull Application application) {
+    public WishlistViewModel(@NonNull Application application) {
         super(application);
-
-        this.application = application;
-        this.repository = repository;
     }
 
+    public void init(InstancesRepository repository) {
+        this.repository = repository;
+        this.wishlistsLiveData = repository.getWishlists();
+    }
+
+    public void searchWishlist(String type, String userDomain, String userEmail, int size, int page) {
+        repository.retrieveWishlist(type, userDomain, userEmail, size, page);
+    }
+
+    public LiveData<List<Wishlist>> getWishlistLiveData() {
+        return this.wishlistsLiveData;
+
+    }
 }

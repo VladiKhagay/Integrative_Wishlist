@@ -16,46 +16,45 @@ public class ActivitiesRepository {
     private static final String TAG = ActivitiesRepository.class.getSimpleName();
     private final ActivitiesService service;
 
+    private MutableLiveData<ActivityBoundary> invokedActivity;
+    private MutableLiveData<List<ActivityBoundary>> allActivities;
+    private MutableLiveData<Boolean> deleteResult;
+
     public ActivitiesRepository(ActivitiesService activitiesService) {
         this.service = activitiesService;
+        invokedActivity = new MutableLiveData<>();
+        allActivities = new MutableLiveData<>();
+        deleteResult = new MutableLiveData<>();
     }
 
-    public LiveData<ActivityBoundary> invoke(ActivityBoundary activityBoundary) {
-
-        final MutableLiveData<ActivityBoundary> responseActivity = new MutableLiveData<>();
-
+    public void invoke(ActivityBoundary activityBoundary) {
         service.invoke(activityBoundary).enqueue(new Callback<ActivityBoundary>() {
             @Override
             public void onResponse(Call<ActivityBoundary> call, Response<ActivityBoundary> response) {
                 Log.d(TAG, "invoke onResponse:: " + response);
 
                 if (response.body() != null) {
-                    responseActivity.setValue(response.body());
-
+                    invokedActivity.postValue(response.body());
                     Log.d(TAG, "invoke activity result:: " + response.body());
                 }
             }
 
             @Override
             public void onFailure(Call<ActivityBoundary> call, Throwable t) {
-                responseActivity.setValue(null);
+                invokedActivity.postValue(null);
                 Log.e(TAG, " invoke onFailure:: " + t.getMessage());
             }
         });
-        return responseActivity;
-
     }
 
-    public LiveData<List<ActivityBoundary>> getAllActivities(String userDomain, String userEmail, int size, int page) {
-        final MutableLiveData<List<ActivityBoundary>> responseList = new MutableLiveData<>();
-
+    public void getAllActivities(String userDomain, String userEmail, int size, int page) {
         service.getAllActivities(userDomain, userEmail, size, page).enqueue(new Callback<List<ActivityBoundary>>() {
             @Override
             public void onResponse(Call<List<ActivityBoundary>> call, Response<List<ActivityBoundary>> response) {
                 Log.d(TAG, "getAllActivities onResponse:: " + response);
 
                 if (response.body() != null) {
-                    responseList.setValue(response.body());
+                    allActivities.postValue(response.body());
                     Log.d(TAG, "getAllActivities result:: " + response.body());
                     Log.d(TAG, "getAllActivities result size:: " + response.body().size());
 
@@ -64,34 +63,41 @@ public class ActivitiesRepository {
 
             @Override
             public void onFailure(Call<List<ActivityBoundary>> call, Throwable t) {
-                responseList.setValue(null);
+                allActivities.postValue(null);
                 Log.e(TAG, " getAllActivities onFailure:: " + t.getMessage());
             }
         });
-
-        return responseList;
     }
 
-    public LiveData<Boolean> deleteAllActivities(String userDomain, String userEmail) {
-        final MutableLiveData<Boolean> result = new MutableLiveData<>();
-
+    public void deleteAllActivities(String userDomain, String userEmail) {
         service.deleteAllActivities(userDomain, userEmail).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
 
                 Log.d(TAG, "deleteAllActivities onResponse:: " + response);
                 if (response.isSuccessful()) {
-                    result.setValue(Boolean.TRUE);
+                    deleteResult.postValue(Boolean.TRUE);
                     Log.d(TAG, "deleteAllActivities result:: " + response.isSuccessful());
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                result.setValue(Boolean.FALSE);
+                deleteResult.postValue(Boolean.FALSE);
                 Log.d(TAG, "deleteAllActivities onFailure:: " + t.getMessage());
             }
         });
-        return result;
+    }
+
+    public MutableLiveData<ActivityBoundary> getInvokedActivity() {
+        return invokedActivity;
+    }
+
+    public MutableLiveData<List<ActivityBoundary>> getAllActivities() {
+        return allActivities;
+    }
+
+    public MutableLiveData<Boolean> getDeleteResult() {
+        return deleteResult;
     }
 }

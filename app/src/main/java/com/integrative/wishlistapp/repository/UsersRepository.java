@@ -20,80 +20,83 @@ public class UsersRepository {
     private static final String TAG = UsersRepository.class.getSimpleName();
     private final UsersService service;
 
+    private MutableLiveData<UserBoundary> createdUser;
+    private MutableLiveData<UserBoundary> loggedUser;
+    private MutableLiveData<Boolean> updateResult;
+    private MutableLiveData<List<UserBoundary>> allUsers;
+    private MutableLiveData<Boolean> deleteResult;
+
+
     public UsersRepository(UsersService service) {
         this.service = service;
+        createdUser = new MutableLiveData<>();
+        loggedUser = new MutableLiveData<>();
+        updateResult = new MutableLiveData<>();
+        allUsers = new MutableLiveData<>();
+        deleteResult = new MutableLiveData<>();
     }
 
 
-    public MutableLiveData<UserBoundary> createUser(NewUserBoundary newUserBoundary) {
-        MutableLiveData<UserBoundary> userResponse = new MutableLiveData<>();
+    public void createUser(NewUserBoundary newUserBoundary) {
         service.createUser(newUserBoundary).enqueue(new Callback<UserBoundary>() {
             @Override
             public void onResponse(Call<UserBoundary> call, Response<UserBoundary> response) {
                 Log.d(TAG, "createUser onResponse:: " + response);
                 if (response.body() != null) {
-                    userResponse.setValue(response.body());
+                    createdUser.postValue(response.body());
                     Log.d(TAG, "createUser result:: "+ response.body());
                 }
             }
-
             @Override
             public void onFailure(Call<UserBoundary> call, Throwable t) {
-                userResponse.setValue(null);
+                createdUser.postValue(null);
                 Log.e(TAG, "createUser onFailure:: " + t.getMessage());
             }
         });
 
-        return userResponse;
     }
 
-    public MutableLiveData<UserBoundary> login (String userDomain, String userEmail) {
-        MutableLiveData<UserBoundary> userResponse = new MutableLiveData<>();
-
+    public void login (String userDomain, String userEmail) {
         service.login(userDomain, userEmail).enqueue(new Callback<UserBoundary>() {
             @Override
             public void onResponse(Call<UserBoundary> call, Response<UserBoundary> response) {
                 Log.d(TAG, "login onResponse:: " + response);
                 if (response.body() != null) {
-                    userResponse.setValue(response.body());
+                    loggedUser.postValue(response.body());
                     Log.d(TAG, "login result:: "+ response.body());
                 }
             }
 
             @Override
             public void onFailure(Call<UserBoundary> call, Throwable t) {
-                userResponse.setValue(null);
+                loggedUser.postValue(null);
                 Log.e(TAG, "login onFailure:: " + t.getMessage());
             }
         });
 
-        return userResponse;
     }
 
-    public MutableLiveData<Boolean> update(String userDomain, String userEmail) {
-        MutableLiveData<Boolean> result = new MutableLiveData<>();
+    public void update(String userDomain, String userEmail) {
         service.update(userDomain, userEmail).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.d(TAG, "update onResponse:: " + response);
                 if (response.isSuccessful()) {
-                    result.setValue(Boolean.TRUE);
+                    updateResult.postValue(Boolean.TRUE);
                     Log.d(TAG, "update result:: " + response.isSuccessful());
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                result.setValue(Boolean.FALSE);
+                updateResult.postValue(Boolean.FALSE);
                 Log.d(TAG, "update onFailure:: " + t.getMessage());
             }
         });
 
-        return result;
     }
 
-    public MutableLiveData<List<UserBoundary>> getAllUsers (String userDomain, String userEmail, int size, int page) {
-        MutableLiveData<List<UserBoundary>> responseList = new MutableLiveData<>();
+    public void getAllUsers (String userDomain, String userEmail, int size, int page) {
 
         service.getAllUsers(userDomain, userEmail, size, page).enqueue(new Callback<List<UserBoundary>>() {
             @Override
@@ -101,7 +104,7 @@ public class UsersRepository {
                 Log.d(TAG, "getAllUsers onResponse:: " + response);
 
                 if (response.body() != null) {
-                    responseList.setValue(response.body());
+                    allUsers.postValue(response.body());
                     Log.d(TAG, "getAllUsers result:: " + response.body());
                     Log.d(TAG, "getAllUsers result size:: " + response.body().size());
                 }
@@ -109,35 +112,32 @@ public class UsersRepository {
 
             @Override
             public void onFailure(Call<List<UserBoundary>> call, Throwable t) {
-                responseList.setValue(null);
+                allUsers.postValue(null);
                 Log.e(TAG, "getAllUsers onFailure:: " + t.getMessage());
             }
         });
 
-        return responseList;
     }
 
 
-    public MutableLiveData<Boolean> deleteAll(String userDomain, String userEmail) {
-        MutableLiveData<Boolean> result = new MutableLiveData<>();
+    public void deleteAll(String userDomain, String userEmail) {
+
         service.deleteAll(userDomain, userEmail).enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.d(TAG, "deleteAll onResponse:: " + response);
                 if (response.isSuccessful()) {
-                    result.setValue(Boolean.TRUE);
+                    deleteResult.postValue(Boolean.TRUE);
                     Log.d(TAG, "deleteAll result:: " + response.isSuccessful());
                 }
             }
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                result.setValue(Boolean.FALSE);
+                deleteResult.postValue(Boolean.FALSE);
                 Log.d(TAG, "deleteAll onFailure:: " + t.getMessage());
             }
         });
-
-        return result;
     }
 
 }
