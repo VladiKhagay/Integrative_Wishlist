@@ -42,14 +42,10 @@ public interface InstancesService {
     @Nullable
     Call<InstanceBoundary> createInstance(@Body @NotNull InstanceBoundary instanceBoundary);
 
-    @Headers({"Content-Type: application/json"})
-    @PUT("/iob/instances/{instanceDomain}/{instanceId}")
+    @Headers({"Content-Type: application/json", "Accept: application/json"})
+    @POST("/iob/instances")
     @Nullable
-    Call<Void> updateInstance(@Path("instanceDomain") @NotNull String instanceDomain
-            , @Path("instanceId") @NotNull String instanceId
-            , @Query("userDomain") @NotNull String userDomain
-            , @Query("userEmail") @NotNull String userEmail
-    );
+    Call<InstanceBoundary> updateInstance(@Body InstanceBoundary instanceBoundary);
 
     @DELETE("/iob/admin/instances")
     @Nullable

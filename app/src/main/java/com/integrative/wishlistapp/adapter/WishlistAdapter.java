@@ -47,6 +47,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
         notifyDataSetChanged();
     }
 
+
     class WishlistViewHolder extends RecyclerView.ViewHolder {
         private TextView wishList_LBL_productName;
 

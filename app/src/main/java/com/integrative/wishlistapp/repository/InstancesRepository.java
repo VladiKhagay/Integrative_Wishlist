@@ -25,6 +25,7 @@ public class InstancesRepository {
     private MutableLiveData<List<InstanceBoundary>> allInstances;
     private MutableLiveData<InstanceBoundary> retrievedInstance;
     private MutableLiveData<InstanceBoundary> createdInstance;
+    private MutableLiveData<InstanceBoundary> updatedInstance;
     private MutableLiveData<Boolean> deleteResult;
     private MutableLiveData<List<InstanceBoundary>> instancesByName;
     private MutableLiveData<List<InstanceBoundary>> instancesByType;
@@ -36,6 +37,7 @@ public class InstancesRepository {
         allInstances = new MutableLiveData<>();
         retrievedInstance = new MutableLiveData<>();
         createdInstance = new MutableLiveData<>();
+        updatedInstance = new MutableLiveData<>();
         deleteResult = new MutableLiveData<>();
         instancesByName = new MutableLiveData<>();
         instancesByType = new MutableLiveData<>();
@@ -108,6 +110,24 @@ public class InstancesRepository {
             }
         });
 
+    }
+
+    public void updateInstance (InstanceBoundary instanceBoundary) {
+        service.updateInstance(instanceBoundary).enqueue(new Callback<InstanceBoundary>() {
+            @Override
+            public void onResponse(Call<InstanceBoundary> call, Response<InstanceBoundary> response) {
+                Log.d(TAG, "updateInstance onResponse:: " + response);
+                if (response.body() != null) {
+                    updatedInstance.postValue(response.body());
+                    Log.d(TAG, "updateInstance result:: " + response.body());
+                }
+            }
+            @Override
+            public void onFailure(Call<InstanceBoundary> call, Throwable t) {
+                updatedInstance.postValue(null);
+                Log.e(TAG, "updateInstance retrieveInstance:: " + t.getMessage());
+            }
+        });
     }
 
     public void deleteAll(String userDomain, String userEmail) {
@@ -301,5 +321,13 @@ public class InstancesRepository {
 
     public void setWishlists(MutableLiveData<List<Wishlist>> wishlists) {
         this.wishlists = wishlists;
+    }
+
+    public MutableLiveData<InstanceBoundary> getUpdatedInstance() {
+        return updatedInstance;
+    }
+
+    public void setUpdatedInstance(MutableLiveData<InstanceBoundary> updatedInstance) {
+        this.updatedInstance = updatedInstance;
     }
 }
