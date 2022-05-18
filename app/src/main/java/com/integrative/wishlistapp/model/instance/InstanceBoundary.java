@@ -1,5 +1,6 @@
 package com.integrative.wishlistapp.model.instance;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -21,7 +22,7 @@ public class InstanceBoundary implements Serializable {
     @SerializedName("active")
     private Boolean active;
     @SerializedName("createdTimestamp")
-    private String createdTimestamp;
+    private Date createdTimestamp;
     @SerializedName("createdBy")
     private CreatedBy createdBy;
     @SerializedName("location")
@@ -30,18 +31,15 @@ public class InstanceBoundary implements Serializable {
     private Map<String, Object> instanceAttributes;
 
 
-
     public InstanceBoundary() {
     }
 
-    public InstanceBoundary(InstanceId instanceId, String type, String name, Boolean active, String createdTimestamp, CreatedBy createdBy, Location location, Map<String, Object> instanceAttributes) {
+    public InstanceBoundary(InstanceId instanceId, String type, String name, Boolean active, Date createdTimestamp, CreatedBy createdBy, Location location, Map<String, Object> instanceAttributes) {
         this.instanceId = instanceId;
         this.type = type;
         this.name = name;
         this.active = active;
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX");
-        this.createdTimestamp = df.format(createdTimestamp);
-//        this.createdTimestamp = createdTimestamp;
+        this.createdTimestamp = createdTimestamp;
         this.createdBy = createdBy;
         this.location = location;
         this.instanceAttributes = instanceAttributes;
@@ -79,11 +77,11 @@ public class InstanceBoundary implements Serializable {
         this.active = active;
     }
 
-    public String getCreatedTimestamp() {
+    public Date getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    public void setCreatedTimestamp(String createdTimestamp) {
+    public void setCreatedTimestamp(Date createdTimestamp) {
 
         this.createdTimestamp = createdTimestamp;
     }

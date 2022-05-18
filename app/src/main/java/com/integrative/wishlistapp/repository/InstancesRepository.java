@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.integrative.wishlistapp.apis.InstancesService;
+import com.integrative.wishlistapp.model.Shop;
 import com.integrative.wishlistapp.model.Wishlist;
 import com.integrative.wishlistapp.model.instance.InstanceBoundary;
 
@@ -31,6 +32,7 @@ public class InstancesRepository {
     private MutableLiveData<List<InstanceBoundary>> instancesByType;
     private MutableLiveData<List<InstanceBoundary>> instancesByLocation;
     private MutableLiveData<List<Wishlist>> wishlists;
+    private MutableLiveData<List<Shop>> shops;
 
     public InstancesRepository(InstancesService service) {
         this.service = service;
@@ -43,6 +45,7 @@ public class InstancesRepository {
         instancesByType = new MutableLiveData<>();
         instancesByLocation = new MutableLiveData<>();
         wishlists = new MutableLiveData<>();
+        shops = new MutableLiveData<>();
     }
 
     public void getAllInstances(String userDomain, String userEmail, int size, int page) {
@@ -226,7 +229,7 @@ public class InstancesRepository {
         service.searchInstancesByType(type, userDomain, userEmail, size, page).enqueue(new Callback<List<InstanceBoundary>>() {
             @Override
             public void onResponse(Call<List<InstanceBoundary>> call, Response<List<InstanceBoundary>> response) {
-                Log.d(TAG, "searchInstancesByName onResponse:: " + response);
+                Log.d(TAG, "retrieveWishlist onResponse:: " + response);
 
                 if (response.body() != null) {
                     ArrayList<Wishlist> temp = new ArrayList<>();
@@ -234,29 +237,51 @@ public class InstancesRepository {
                         if (instanceBoundary.getCreatedBy().getUserId().getDomain().equals(userDomain)
                                 && instanceBoundary.getCreatedBy().getUserId().getEmail().equals(userEmail)) {
                             Gson gson = new Gson();
-
                             JsonElement jsonElement = gson.toJsonTree(instanceBoundary.getInstanceAttributes());
-
-                            Log.d(TAG, "Test wishlistObject " + gson.fromJson(jsonElement, Wishlist.class));
-
                             temp.add(gson.fromJson(jsonElement, Wishlist.class));
-
                         }
                     }
                     wishlists.postValue(temp);
-                    Log.d(TAG, "getWishlist result:: " + response.body());
-                    Log.d(TAG, "getWishlist result size:: " + response.body().size());
+
                 }
             }
 
             @Override
             public void onFailure(Call<List<InstanceBoundary>> call, Throwable t) {
                 wishlists.postValue(null);
-                Log.e(TAG, "getWishlist onFailure:: " + t.getMessage());
+                Log.e(TAG, "retrieveWishlist onFailure:: " + t.getMessage());
             }
         });
+    }
 
+    public void retrieveShops(String type, String userDomain, String userEmail, int size, int page) {
 
+        service.searchInstancesByType(type, userDomain, userEmail, size, page).enqueue(new Callback<List<InstanceBoundary>>() {
+            @Override
+            public void onResponse(Call<List<InstanceBoundary>> call, Response<List<InstanceBoundary>> response) {
+                Log.d(TAG, "retrieveShops onResponse:: " + response);
+
+                if (response.body() != null) {
+                    ArrayList<Shop> temp = new ArrayList<>();
+                    for (InstanceBoundary instanceBoundary : response.body()) {
+                        if (instanceBoundary.getCreatedBy().getUserId().getDomain().equals(userDomain)
+                                && instanceBoundary.getCreatedBy().getUserId().getEmail().equals(userEmail)) {
+                            Gson gson = new Gson();
+                            JsonElement jsonElement = gson.toJsonTree(instanceBoundary.getInstanceAttributes());
+                            temp.add(gson.fromJson(jsonElement, Shop.class));
+                        }
+                    }
+                    shops.postValue(temp);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<InstanceBoundary>> call, Throwable t) {
+                shops.postValue(null);
+                Log.e(TAG, "retrieveShops onFailure:: " + t.getMessage());
+            }
+        });
     }
 
     public MutableLiveData<List<InstanceBoundary>> getAllInstances() {
@@ -329,5 +354,13 @@ public class InstancesRepository {
 
     public void setUpdatedInstance(MutableLiveData<InstanceBoundary> updatedInstance) {
         this.updatedInstance = updatedInstance;
+    }
+
+    public MutableLiveData<List<Shop>> getShops() {
+        return shops;
+    }
+
+    public void setShops(MutableLiveData<List<Shop>> shops) {
+        this.shops = shops;
     }
 }

@@ -55,7 +55,7 @@
                     android:insetBottom="0dp"
                     android:text="00"
                     android:textColor="#DFC25A"
-                    android:textSize="18sp" />
+                    android:textSize="18dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/wishList_BTN_plus"

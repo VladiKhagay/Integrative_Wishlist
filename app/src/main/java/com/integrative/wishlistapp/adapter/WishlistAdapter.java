@@ -23,7 +23,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
     @NonNull
     @Override
     public WishlistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recyclerview_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.wishlist_item, parent, false);
 
         return new WishlistViewHolder(view);
     }
@@ -33,7 +33,10 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
 
         Product product = products.get(position);
 
-        holder.wishList_LBL_productName.setText(product.getName());
+        holder.name.setText(product.getName());
+        holder.price.setText(product.getPrice().toString());
+        holder.category.setText(product.getCategory());
+
 
     }
 
@@ -49,12 +52,15 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
 
 
     class WishlistViewHolder extends RecyclerView.ViewHolder {
-        private TextView wishList_LBL_productName;
+        private TextView name;
+        private TextView price;
+        private TextView category;
 
         public WishlistViewHolder(@NonNull View itemView) {
             super(itemView);
-
-            wishList_LBL_productName = itemView.findViewById(R.id.wishList_LBL_productName);
+            name = (TextView) itemView.findViewById(R.id.wli_textview_name);
+            price = (TextView) itemView.findViewById(R.id.wli_textview_price);
+            category = (TextView) itemView.findViewById(R.id.wli_textview_category);
         }
     }
 }
