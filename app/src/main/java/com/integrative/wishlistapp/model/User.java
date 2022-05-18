@@ -3,7 +3,9 @@ package com.integrative.wishlistapp.model;
 import com.google.gson.annotations.SerializedName;
 import com.integrative.wishlistapp.model.user.UserId;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
 
     @SerializedName("userId")
     private String userId;

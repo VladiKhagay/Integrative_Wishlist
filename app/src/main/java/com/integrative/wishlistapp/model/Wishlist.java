@@ -2,10 +2,11 @@ package com.integrative.wishlistapp.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
-public class Wishlist {
+public class Wishlist implements Serializable {
 
     @SerializedName("products")
     private List<Product> products;

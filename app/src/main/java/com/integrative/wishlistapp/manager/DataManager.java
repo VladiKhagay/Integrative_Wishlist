@@ -2,15 +2,20 @@ package com.integrative.wishlistapp.manager;
 
 import android.util.Log;
 
+import com.integrative.wishlistapp.AppConstants;
 import com.integrative.wishlistapp.model.Product;
 import com.integrative.wishlistapp.model.Shop;
 import com.integrative.wishlistapp.model.User;
 import com.integrative.wishlistapp.model.Wishlist;
+import com.integrative.wishlistapp.model.activity.ActivityBoundary;
+import com.integrative.wishlistapp.model.instance.InstanceBoundary;
 import com.integrative.wishlistapp.model.user.UserBoundary;
 import com.integrative.wishlistapp.model.user.UserId;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DataManager {
 
@@ -19,22 +24,29 @@ public class DataManager {
 
 
     private User user;
-    private List<Shop> shopList;
-    private List<Wishlist>wishlists;
+    private Map<String , Shop> shopsMap;
+    private Map<String, Wishlist> wishlistMap;
     private Wishlist currentWishlist;
 
     private UserBoundary userBoundary;
+    private List<InstanceBoundary> instanceBoundaries;
+    private List<ActivityBoundary> activityBoundaries;
     private DataManager () {
         user = new User();
-        userBoundary = new UserBoundary();
-        userBoundary.setUserId(new UserId("Asaf@gogo.com", "2022b.timor.bystritskie"));
-        userBoundary.setAvatar("ASF");
-        userBoundary.setRole("MANAGER");
-        userBoundary.setUsername("Sierra");
-        shopList = new ArrayList<>();
-        wishlists = new ArrayList<>();
+        shopsMap = new HashMap<>();
+        wishlistMap = new HashMap<>();
         currentWishlist = new Wishlist();
+        userBoundary = new UserBoundary();
 
+        /* Dummy User */
+        userBoundary.setUsername("Sierra");
+        userBoundary.setUserId(new UserId("Asaf@gogo.com","2022b.timor.bystritskie"));
+        userBoundary.setAvatar("ASF");
+        userBoundary.setRole(AppConstants.MANAGER);
+
+
+        instanceBoundaries = new ArrayList<>();
+        activityBoundaries = new ArrayList<>();
     }
 
     public static DataManager getInstance() {
@@ -52,20 +64,20 @@ public class DataManager {
         this.user = user;
     }
 
-    public List<Shop> getShopList() {
-        return shopList;
+    public Map<String, Shop> getShopsMap() {
+        return shopsMap;
     }
 
-    public void setShopList(List<Shop> shopList) {
-        this.shopList = shopList;
+    public void setShopsMap(Map<String, Shop> shopsMap) {
+        this.shopsMap = shopsMap;
     }
 
-    public List<Wishlist> getWishlists() {
-        return wishlists;
+    public Map<String, Wishlist> getWishlistMap() {
+        return wishlistMap;
     }
 
-    public void setWishlists(List<Wishlist> wishlists) {
-        this.wishlists = wishlists;
+    public void setWishlistMap(Map<String, Wishlist> wishlistMap) {
+        this.wishlistMap = wishlistMap;
     }
 
     public Wishlist getCurrentWishlist() {
@@ -84,23 +96,68 @@ public class DataManager {
         this.userBoundary = userBoundary;
     }
 
-    public void addProductToWishlist(Product product) {
-        if (this.currentWishlist.getProducts().add(product)){
-            Log.d(TAG, "addProductToWishlist succeed");
-        } else {
-            Log.d(TAG, "addProductToWishlist failed");
+    public List<InstanceBoundary> getInstanceBoundaries() {
+        return instanceBoundaries;
+    }
+
+    public void setInstanceBoundaries(List<InstanceBoundary> instanceBoundaries) {
+        this.instanceBoundaries = instanceBoundaries;
+    }
+
+    public List<ActivityBoundary> getActivityBoundaries() {
+        return activityBoundaries;
+    }
+
+    public void setActivityBoundaries(List<ActivityBoundary> activityBoundaries) {
+        this.activityBoundaries = activityBoundaries;
+    }
+
+    public void setWishlistsMap(List<Wishlist> wishlists) {
+        if (!this.wishlistMap.isEmpty()) {
+            this.wishlistMap.clear();
+        }
+        if (wishlists != null) {
+            for (int i = 0; i < wishlists.size(); i ++) {
+                this.wishlistMap.put(String.valueOf(i), wishlists.get(i));
+            }
         }
     }
 
-    public void removeProductFromWishlist(Product product, int index) {
-        if (index > 0  && index < currentWishlist.getProducts().size()) {
-            if (currentWishlist.getProducts().remove(index) != null) {
-                Log.d(TAG, "removeProductFromWishlist succeed");
+    public void setShopsMap(List<Shop> shops) {
+        if(!this.shopsMap.isEmpty()) {
+            this.shopsMap.clear();
+        }
 
-            } else {
-                Log.d(TAG, "removeProductFromWishlist failed");
-
+        if (shops != null) {
+            for(int i = 0 ; i < shops.size(); i++) {
+                this.shopsMap.put(shops.get(i).getProducts().get(0).getCategory(), shops.get(i));
             }
+        }
+    }
+
+    public void addProductToWishlist(Product product) {
+        if (product != null) {
+            this.currentWishlist.getProducts().add(product);
+        }
+    }
+
+    public void removeProductFromWishlist(Product product) {
+        if(product != null) {
+            this.currentWishlist.getProducts().remove(product);
+        }
+    }
+
+    public void addWishlist(Wishlist wishlist) {
+        if(wishlist != null) {
+            this.wishlistMap.put(String.valueOf(this.wishlistMap.size()), wishlist);
+        }
+
+    }
+
+    public void addShop(Shop shop) {
+
+        if (shop != null) {
+            this.shopsMap.put(shop.getProducts().get(0).getCategory(), shop);
         }
     }
 }

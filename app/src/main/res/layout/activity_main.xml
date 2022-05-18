@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:orientation="vertical">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/activity_main_recycler_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/wishlist_item"
-        />
 
     <RelativeLayout
         android:id="@+id/main_activity_bottom_linearlayout"
@@ -32,28 +21,58 @@
         android:paddingRight="16dp"
         >
 
+        <Button
+            android:id="@+id/activity_main_button_gotoWL"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:padding="0dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerInParent="true"
+            style="@style/Widget.AppCompat.Toolbar.Button.Navigation"
+
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            />
         <TextView
-            android:id="@+id/main_activity_bottom_bar_tv"
+            android:id="@+id/main_activity_bar_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:layout_alignParentLeft="true"
-            android:text="@string/title"
-            android:textSize="18dp"
+            android:layout_toRightOf="@id/activity_main_button_gotoWL"
+            android:layout_toLeftOf="@id/activity_main_button_gotoshop"
+            android:layout_centerInParent="true"
+            android:textAppearance="?attr/textAppearanceLabelMedium"
+            android:text="@string/my_wishlist"
+            android:textSize="18sp"
             android:gravity="center"
             android:layout_marginEnd="50dp"/>
         <Button
+            android:id="@+id/activity_main_button_gotoshop"
             android:layout_width="wrap_content"
             android:layout_height="36dp"
             android:padding="0dp"
             android:layout_alignParentRight="true"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_centerInParent="true"
+            style="@style/Widget.AppCompat.Toolbar.Button.Navigation"
             android:text="@string/go_to_shop"
             android:textColor="@color/white"
-            android:textSize="18dp"
+            android:textSize="18sp"
             />
 
 
     </RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/activity_main_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/wishlist_item"
+        />
+
+
+
+</LinearLayout>

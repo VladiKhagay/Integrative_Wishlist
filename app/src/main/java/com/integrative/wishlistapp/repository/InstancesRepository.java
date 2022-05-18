@@ -7,12 +7,15 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.integrative.wishlistapp.apis.InstancesService;
+import com.integrative.wishlistapp.manager.DataManager;
+import com.integrative.wishlistapp.model.Product;
 import com.integrative.wishlistapp.model.Shop;
 import com.integrative.wishlistapp.model.Wishlist;
 import com.integrative.wishlistapp.model.instance.InstanceBoundary;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -22,20 +25,24 @@ public class InstancesRepository {
 
     private static final String TAG = InstancesRepository.class.getSimpleName();
     private final InstancesService service;
+    private final DataManager dataManager;
 
-    private MutableLiveData<List<InstanceBoundary>> allInstances;
-    private MutableLiveData<InstanceBoundary> retrievedInstance;
-    private MutableLiveData<InstanceBoundary> createdInstance;
-    private MutableLiveData<InstanceBoundary> updatedInstance;
-    private MutableLiveData<Boolean> deleteResult;
-    private MutableLiveData<List<InstanceBoundary>> instancesByName;
-    private MutableLiveData<List<InstanceBoundary>> instancesByType;
-    private MutableLiveData<List<InstanceBoundary>> instancesByLocation;
-    private MutableLiveData<List<Wishlist>> wishlists;
-    private MutableLiveData<List<Shop>> shops;
+    private final MutableLiveData<List<InstanceBoundary>> allInstances;
+    private final MutableLiveData<InstanceBoundary> retrievedInstance;
+    private final MutableLiveData<InstanceBoundary> createdInstance;
+    private final MutableLiveData<InstanceBoundary> updatedInstance;
+    private final MutableLiveData<Boolean> deleteResult;
+    private final MutableLiveData<List<InstanceBoundary>> instancesByName;
+    private final MutableLiveData<List<InstanceBoundary>> instancesByType;
+    private final MutableLiveData<List<InstanceBoundary>> instancesByLocation;
+    private final MutableLiveData<Map<String, Wishlist>> wishlists;
+    private final MutableLiveData<Map<String, Shop>> shops;
+    private final MutableLiveData<Wishlist> currentWishList;
+
 
     public InstancesRepository(InstancesService service) {
         this.service = service;
+        this.dataManager = DataManager.getInstance();
         allInstances = new MutableLiveData<>();
         retrievedInstance = new MutableLiveData<>();
         createdInstance = new MutableLiveData<>();
@@ -46,6 +53,7 @@ public class InstancesRepository {
         instancesByLocation = new MutableLiveData<>();
         wishlists = new MutableLiveData<>();
         shops = new MutableLiveData<>();
+        currentWishList = new MutableLiveData<>();
     }
 
     public void getAllInstances(String userDomain, String userEmail, int size, int page) {
@@ -65,7 +73,7 @@ public class InstancesRepository {
 
             @Override
             public void onFailure(Call<List<InstanceBoundary>> call, Throwable t) {
-                allInstances .postValue(null);
+                allInstances.postValue(null);
                 Log.e(TAG, "getAllInstances onFailure:: " + t.getMessage());
             }
         });
@@ -102,6 +110,7 @@ public class InstancesRepository {
                 Log.d(TAG, "createInstance onResponse:: " + response);
                 if (response.body() != null) {
                     createdInstance.postValue(response.body());
+                    dataManager.getInstanceBoundaries().add(response.body());
                     Log.d(TAG, "createInstance result:: " + response.body());
                 }
             }
@@ -115,7 +124,7 @@ public class InstancesRepository {
 
     }
 
-    public void updateInstance (InstanceBoundary instanceBoundary) {
+    public void updateInstance(InstanceBoundary instanceBoundary) {
         service.updateInstance(instanceBoundary).enqueue(new Callback<InstanceBoundary>() {
             @Override
             public void onResponse(Call<InstanceBoundary> call, Response<InstanceBoundary> response) {
@@ -125,6 +134,7 @@ public class InstancesRepository {
                     Log.d(TAG, "updateInstance result:: " + response.body());
                 }
             }
+
             @Override
             public void onFailure(Call<InstanceBoundary> call, Throwable t) {
                 updatedInstance.postValue(null);
@@ -224,24 +234,25 @@ public class InstancesRepository {
 
     }
 
-    public void retrieveWishlist(String type, String userDomain, String userEmail, int size, int page) {
+    public void retrieveWishlists(String type, String userDomain, String userEmail, int size, int page) {
 
         service.searchInstancesByType(type, userDomain, userEmail, size, page).enqueue(new Callback<List<InstanceBoundary>>() {
             @Override
             public void onResponse(Call<List<InstanceBoundary>> call, Response<List<InstanceBoundary>> response) {
                 Log.d(TAG, "retrieveWishlist onResponse:: " + response);
-
                 if (response.body() != null) {
-                    ArrayList<Wishlist> temp = new ArrayList<>();
                     for (InstanceBoundary instanceBoundary : response.body()) {
                         if (instanceBoundary.getCreatedBy().getUserId().getDomain().equals(userDomain)
                                 && instanceBoundary.getCreatedBy().getUserId().getEmail().equals(userEmail)) {
+                            dataManager.getInstanceBoundaries().add(instanceBoundary);
                             Gson gson = new Gson();
                             JsonElement jsonElement = gson.toJsonTree(instanceBoundary.getInstanceAttributes());
-                            temp.add(gson.fromJson(jsonElement, Wishlist.class));
+                            dataManager.addWishlist(gson.fromJson(jsonElement, Wishlist.class));
+                            dataManager.setCurrentWishlist(gson.fromJson(jsonElement, Wishlist.class));
                         }
                     }
-                    wishlists.postValue(temp);
+                    wishlists.postValue(dataManager.getWishlistMap());
+                    currentWishList.postValue(dataManager.getCurrentWishlist());
 
                 }
             }
@@ -262,17 +273,15 @@ public class InstancesRepository {
                 Log.d(TAG, "retrieveShops onResponse:: " + response);
 
                 if (response.body() != null) {
-                    ArrayList<Shop> temp = new ArrayList<>();
                     for (InstanceBoundary instanceBoundary : response.body()) {
-                        if (instanceBoundary.getCreatedBy().getUserId().getDomain().equals(userDomain)
-                                && instanceBoundary.getCreatedBy().getUserId().getEmail().equals(userEmail)) {
-                            Gson gson = new Gson();
-                            JsonElement jsonElement = gson.toJsonTree(instanceBoundary.getInstanceAttributes());
-                            temp.add(gson.fromJson(jsonElement, Shop.class));
-                        }
-                    }
-                    shops.postValue(temp);
+                        dataManager.getInstanceBoundaries().add(instanceBoundary);
+                        Gson gson = new Gson();
+                        JsonElement jsonElement = gson.toJsonTree(instanceBoundary.getInstanceAttributes());
+                        dataManager.addShop(gson.fromJson(jsonElement, Shop.class));
 
+
+                    }
+                    shops.postValue(dataManager.getShopsMap());
                 }
             }
 
@@ -284,83 +293,63 @@ public class InstancesRepository {
         });
     }
 
-    public MutableLiveData<List<InstanceBoundary>> getAllInstances() {
-        return allInstances;
+    public void addProductToWishlist(Product p) {
+        if (p != null) {
+            dataManager.addProductToWishlist(p);
+            this.currentWishList.postValue(dataManager.getCurrentWishlist());
+            Log.d(TAG, "addProductToWishlist:: " + p);
+        }
     }
 
-    public void setAllInstances(MutableLiveData<List<InstanceBoundary>> allInstances) {
-        this.allInstances = allInstances;
+    public void removeProductFromWishlist(Product p) {
+        if (p != null) {
+            dataManager.removeProductFromWishlist(p);
+            this.currentWishList.postValue(dataManager.getCurrentWishlist());
+            Log.d(TAG, "removeProductFromWishlist:: " + p);
+        }
+    }
+
+    public MutableLiveData<List<InstanceBoundary>> getAllInstances() {
+        return allInstances;
     }
 
     public MutableLiveData<InstanceBoundary> getRetrievedInstance() {
         return retrievedInstance;
     }
 
-    public void setRetrievedInstance(MutableLiveData<InstanceBoundary> retrievedInstance) {
-        this.retrievedInstance = retrievedInstance;
-    }
-
     public MutableLiveData<InstanceBoundary> getCreatedInstance() {
         return createdInstance;
-    }
-
-    public void setCreatedInstance(MutableLiveData<InstanceBoundary> createdInstance) {
-        this.createdInstance = createdInstance;
-    }
-
-    public MutableLiveData<Boolean> getDeleteResult() {
-        return deleteResult;
-    }
-
-    public void setDeleteResult(MutableLiveData<Boolean> deleteResult) {
-        this.deleteResult = deleteResult;
-    }
-
-    public MutableLiveData<List<InstanceBoundary>> getInstancesByName() {
-        return instancesByName;
-    }
-
-    public void setInstancesByName(MutableLiveData<List<InstanceBoundary>> instancesByName) {
-        this.instancesByName = instancesByName;
-    }
-
-    public MutableLiveData<List<InstanceBoundary>> getInstancesByType() {
-        return instancesByType;
-    }
-
-    public void setInstancesByType(MutableLiveData<List<InstanceBoundary>> instancesByType) {
-        this.instancesByType = instancesByType;
-    }
-
-    public MutableLiveData<List<InstanceBoundary>> getInstancesByLocation() {
-        return instancesByLocation;
-    }
-
-    public void setInstancesByLocation(MutableLiveData<List<InstanceBoundary>> instancesByLocation) {
-        this.instancesByLocation = instancesByLocation;
-    }
-
-    public MutableLiveData<List<Wishlist>> getWishlists() {
-        return wishlists;
-    }
-
-    public void setWishlists(MutableLiveData<List<Wishlist>> wishlists) {
-        this.wishlists = wishlists;
     }
 
     public MutableLiveData<InstanceBoundary> getUpdatedInstance() {
         return updatedInstance;
     }
 
-    public void setUpdatedInstance(MutableLiveData<InstanceBoundary> updatedInstance) {
-        this.updatedInstance = updatedInstance;
+    public MutableLiveData<Boolean> getDeleteResult() {
+        return deleteResult;
     }
 
-    public MutableLiveData<List<Shop>> getShops() {
+    public MutableLiveData<List<InstanceBoundary>> getInstancesByName() {
+        return instancesByName;
+    }
+
+    public MutableLiveData<List<InstanceBoundary>> getInstancesByType() {
+        return instancesByType;
+    }
+
+    public MutableLiveData<List<InstanceBoundary>> getInstancesByLocation() {
+        return instancesByLocation;
+    }
+
+    public MutableLiveData<Map<String, Wishlist>> getWishlists() {
+        return wishlists;
+    }
+
+    public MutableLiveData<Map<String, Shop>> getShops() {
         return shops;
     }
 
-    public void setShops(MutableLiveData<List<Shop>> shops) {
-        this.shops = shops;
+    public MutableLiveData<Wishlist> getCurrentWishList() {
+        return currentWishList;
     }
 }

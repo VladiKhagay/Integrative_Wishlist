@@ -1,7 +1,12 @@
 package com.integrative.wishlistapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
@@ -11,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.integrative.wishlistapp.adapter.WishlistAdapter;
 import com.integrative.wishlistapp.apis.InstancesService;
 import com.integrative.wishlistapp.apis.RetrofitService;
+import com.integrative.wishlistapp.databinding.ActivityMainBinding;
 import com.integrative.wishlistapp.manager.DataManager;
 import com.integrative.wishlistapp.model.Product;
 import com.integrative.wishlistapp.model.Wishlist;
@@ -31,39 +37,88 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG  = MainActivity.class.getSimpleName();
     private WishlistViewModel viewModel;
     private WishlistAdapter adapter;
     private MyApplication app;
+    private Button goToShopButton;
+    private Button goToWishlistButton;
+    private TextView totalPriceTextView;
 
+    private mOnClickListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         app = (MyApplication) getApplication();
+
+        // create listener for the adapter
+        this.listener = new mOnClickListener() {
+
+            @Override
+            public void onAddClicked(Product product) {
+                // do nothing
+            }
+
+            @Override
+            public void onDeleteClicked(Product product) {
+                Log.d(TAG, "onDeleteClicked:: " + product);
+                viewModel.removeProductFromWishlist(product);
+            }
+        };
+
+        // remove top bar
         getSupportActionBar().hide();
 
-        adapter = new WishlistAdapter();
-        viewModel = new ViewModelProvider(this).get(WishlistViewModel.class);
-
+        // Setup view elements
         RecyclerView rv = findViewById(R.id.activity_main_recycler_view);
-        rv.setAdapter(adapter);
-        viewModel.init(app.getInstancesRepository());
-        UserBoundary temp = DataManager.getInstance().getUserBoundary();
-        viewModel.searchWishlist("Wishlist",temp.getUserId().getDomain(), temp.getUserId().getEmail(), 10,0);
+        goToShopButton = findViewById(R.id.activity_main_button_gotoshop);
+        goToWishlistButton = findViewById(R.id.activity_main_button_gotoWL);
+        totalPriceTextView = findViewById(R.id.main_activity_bar_tv);
 
+        // Setup adapter
+        adapter = new WishlistAdapter(listener);
+
+        //Setup View model
+        viewModel = new ViewModelProvider(this).get(WishlistViewModel.class);
+        viewModel.init(app.getInstancesRepository());
+
+        // Setup recycler view adapter
+        rv.setAdapter(adapter);
+
+
+        setUpButtons();
+
+        UserBoundary temp = DataManager.getInstance().getUserBoundary();
+
+        viewModel.searchWishlist(AppConstants.WISHLIST, temp.getUserId().getDomain(), temp.getUserId().getEmail(), 20, 0);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        viewModel.getWishlistLiveData().observe(this, wishlists -> {
-            if (wishlists != null) {
-                DataManager.getInstance().setWishlists(wishlists);
-                DataManager.getInstance().setCurrentWishlist(DataManager.getInstance().getWishlists().get(0));
-                Log.d("MAINTEST", " TEST:: " + DataManager.getInstance().getCurrentWishlist().toString());
-                adapter.setProducts(DataManager.getInstance().getCurrentWishlist().getProducts());
+        viewModel.getCurrWishlistLiveData().observe(this, wishlist -> {
+            Log.d("MainActivitytest", "temp user = " + wishlist.toString());
+            adapter.setProducts(wishlist.getProducts());
+        });
+    }
+
+    private void setUpButtons() {
+
+        goToShopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startShopActivity();
             }
         });
     }
+
+    private void  startShopActivity() {
+        Intent intent = new Intent(this, ShopActivity.class);
+        startActivity(intent);
+
+    }
+
+
 }

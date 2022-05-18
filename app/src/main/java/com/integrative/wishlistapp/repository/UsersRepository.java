@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 
 import com.integrative.wishlistapp.apis.InstancesService;
 import com.integrative.wishlistapp.apis.UsersService;
+import com.integrative.wishlistapp.manager.DataManager;
 import com.integrative.wishlistapp.model.user.NewUserBoundary;
 import com.integrative.wishlistapp.model.user.UserBoundary;
 
@@ -19,21 +20,24 @@ public class UsersRepository {
 
     private static final String TAG = UsersRepository.class.getSimpleName();
     private final UsersService service;
+    private final DataManager dataManager;
 
-    private MutableLiveData<UserBoundary> createdUser;
-    private MutableLiveData<UserBoundary> loggedUser;
-    private MutableLiveData<Boolean> updateResult;
-    private MutableLiveData<List<UserBoundary>> allUsers;
-    private MutableLiveData<Boolean> deleteResult;
+    private final MutableLiveData<UserBoundary> createdUser;
+    private final MutableLiveData<UserBoundary> loggedUser;
+    private final MutableLiveData<Boolean> updateResult;
+    private final MutableLiveData<List<UserBoundary>> allUsers;
+    private final MutableLiveData<Boolean> deleteResult;
 
 
     public UsersRepository(UsersService service) {
         this.service = service;
+        this.dataManager = DataManager.getInstance();
         createdUser = new MutableLiveData<>();
         loggedUser = new MutableLiveData<>();
         updateResult = new MutableLiveData<>();
         allUsers = new MutableLiveData<>();
         deleteResult = new MutableLiveData<>();
+
     }
 
 
@@ -63,6 +67,7 @@ public class UsersRepository {
                 Log.d(TAG, "login onResponse:: " + response);
                 if (response.body() != null) {
                     loggedUser.postValue(response.body());
+                    dataManager.setUserBoundary(response.body());
                     Log.d(TAG, "login result:: "+ response.body());
                 }
             }

@@ -7,15 +7,17 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.integrative.wishlistapp.model.Product;
 import com.integrative.wishlistapp.model.Shop;
 import com.integrative.wishlistapp.model.instance.InstanceBoundary;
 import com.integrative.wishlistapp.repository.InstancesRepository;
 
 import java.util.List;
+import java.util.Map;
 
 public class ShopViewModel extends AndroidViewModel {
     private InstancesRepository repository;
-    private MutableLiveData<List<Shop>> shops;
+    private MutableLiveData<Map<String,Shop>> shops;
 
     public ShopViewModel(@NonNull Application application) {
         super(application);
@@ -30,7 +32,16 @@ public class ShopViewModel extends AndroidViewModel {
         this.repository.retrieveShops(type, userDomain, userEmail, size, page);
     }
 
-    public LiveData<List<Shop>> getShops() {
+
+    public void addProductToWishlist(Product product) {
+        repository.addProductToWishlist(product);
+    }
+
+    public void removeProductFromWishlist(Product product ) {
+        repository.removeProductFromWishlist(product);
+    }
+
+    public MutableLiveData<Map<String, Shop>> getShops() {
         return shops;
     }
 }

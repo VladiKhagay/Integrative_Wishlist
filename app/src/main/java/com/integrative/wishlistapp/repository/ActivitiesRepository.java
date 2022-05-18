@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import com.integrative.wishlistapp.apis.ActivitiesService;
+import com.integrative.wishlistapp.manager.DataManager;
 import com.integrative.wishlistapp.model.activity.ActivityBoundary;
 import java.util.List;
 import retrofit2.Call;
@@ -15,13 +16,16 @@ public class ActivitiesRepository {
 
     private static final String TAG = ActivitiesRepository.class.getSimpleName();
     private final ActivitiesService service;
+    private final DataManager dataManager;
 
-    private MutableLiveData<ActivityBoundary> invokedActivity;
-    private MutableLiveData<List<ActivityBoundary>> allActivities;
-    private MutableLiveData<Boolean> deleteResult;
+    private final MutableLiveData<ActivityBoundary> invokedActivity;
+    private final MutableLiveData<List<ActivityBoundary>> allActivities;
+    private final MutableLiveData<Boolean> deleteResult;
+
 
     public ActivitiesRepository(ActivitiesService activitiesService) {
         this.service = activitiesService;
+        this.dataManager = DataManager.getInstance();
         invokedActivity = new MutableLiveData<>();
         allActivities = new MutableLiveData<>();
         deleteResult = new MutableLiveData<>();
