@@ -30,7 +30,7 @@ import com.integrative.wishlistapp.viewmodel.WishlistViewModel;
  * Use the {@link ShopFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ShopFragment extends Fragment {
+public class ShopFragment extends Fragment  implements ShopAdapter.ShopActionsHandler {
 
     private static final String SHOP = "shop";
     private Shop shop;
@@ -77,7 +77,7 @@ public class ShopFragment extends Fragment {
                 shopViewModel.removeProductFromWishlist(product);
             }
         };
-        adapter = new ShopAdapter(listener);
+        adapter = new ShopAdapter(this);
 
     }
 
@@ -97,5 +97,15 @@ public class ShopFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+    }
+
+    @Override
+    public void onAddClicked(Product product) {
+        shopViewModel.addProductToWishlist(product);
+    }
+
+    @Override
+    public void onRemoveClicked(Product product) {
+        shopViewModel.removeProductFromWishlist(product);
     }
 }

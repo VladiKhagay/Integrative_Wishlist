@@ -20,13 +20,17 @@ import java.util.List;
 
 public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishlistViewHolder> {
 
+    public interface WishlistActionsHandler {
+        void onDeleteClicked(Product product);
+    }
+
     private static final String TAG = WishlistAdapter.class.getSimpleName();
     private List<Product> products = new ArrayList<>();
-    private mOnClickListener listener;
+    private WishlistActionsHandler actionsHandler;
 
 
-    public WishlistAdapter(mOnClickListener listener) {
-        this.listener = listener;
+    public WishlistAdapter(WishlistActionsHandler actionsHandler ) {
+        this.actionsHandler = actionsHandler;
     }
 
     @NonNull
@@ -34,7 +38,15 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
     public WishlistViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.wishlist_item, parent, false);
 
-        WishlistViewHolder viewHolder = new WishlistViewHolder(view, listener);
+        WishlistViewHolder viewHolder = new WishlistViewHolder(view);
+
+        viewHolder.delete_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                actionsHandler.onDeleteClicked(products.get(viewHolder.getLayoutPosition()));
+            }
+        });
         return viewHolder;
     }
 
@@ -60,26 +72,19 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.Wishli
     }
 
 
-    class WishlistViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class WishlistViewHolder extends RecyclerView.ViewHolder{
         private TextView name;
         private TextView price;
         private TextView category;
         private Button delete_button;
 
-        private mOnClickListener listener;
-        public WishlistViewHolder(@NonNull View itemView, mOnClickListener listener) {
+        public WishlistViewHolder(@NonNull View itemView) {
             super(itemView);
-            this.listener = listener;
             name = (TextView) itemView.findViewById(R.id.wli_textview_name);
             price = (TextView) itemView.findViewById(R.id.wli_textview_price);
             category = (TextView) itemView.findViewById(R.id.wli_textview_category);
             delete_button = (Button) itemView.findViewById(R.id.wli_button_delete);
         }
 
-        @Override
-        public void onClick(View view) {
-            listener.onDeleteClicked(products.get(this.getLayoutPosition()));
-            Log.d(TAG, "WishlistViewHolder onClick:: " + products.get(this.getLayoutPosition()));
-        }
     }
 }

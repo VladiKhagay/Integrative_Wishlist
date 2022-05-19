@@ -12,7 +12,7 @@ import com.integrative.wishlistapp.model.Shop;
 
 import java.util.List;
 
-public class ShopFragmentAdapter extends FragmentStateAdapter {
+public class ShopFragmentAdapter extends FragmentStateAdapter{
 
     private int numOfTabs;
     private List<Shop> shopList;

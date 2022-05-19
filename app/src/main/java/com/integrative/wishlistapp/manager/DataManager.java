@@ -143,7 +143,17 @@ public class DataManager {
 
     public void removeProductFromWishlist(Product product) {
         if(product != null) {
-            this.currentWishlist.getProducts().remove(product);
+
+            int index = -1;
+            for (int i = 0; i < this.currentWishlist.getProducts().size(); i ++) {
+                if (this.currentWishlist.getProducts().get(i).getName().equals(product.getName())) {
+                    index = i;
+                    break;
+                }
+            }
+            if (index != -1) {
+                this.currentWishlist.getProducts().remove(product);
+            }
         }
     }
 

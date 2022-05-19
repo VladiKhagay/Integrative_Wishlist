@@ -35,7 +35,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements WishlistAdapter.WishlistActionsHandler {
 
     private static final String TAG  = MainActivity.class.getSimpleName();
     private WishlistViewModel viewModel;
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         totalPriceTextView = findViewById(R.id.main_activity_bar_tv);
 
         // Setup adapter
-        adapter = new WishlistAdapter(listener);
+        adapter = new WishlistAdapter(this);
 
         //Setup View model
         viewModel = new ViewModelProvider(this).get(WishlistViewModel.class);
@@ -91,8 +91,10 @@ public class MainActivity extends AppCompatActivity {
         setUpButtons();
 
         UserBoundary temp = DataManager.getInstance().getUserBoundary();
+        if (DataManager.getInstance().getShopsMap().isEmpty()) {
 
-        viewModel.searchWishlist(AppConstants.WISHLIST, temp.getUserId().getDomain(), temp.getUserId().getEmail(), 20, 0);
+            viewModel.searchWishlist(AppConstants.WISHLIST, temp.getUserId().getDomain(), temp.getUserId().getEmail(), 20, 0);
+        }
     }
 
     @Override
@@ -121,4 +123,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onDeleteClicked(Product product) {
+        viewModel.removeProductFromWishlist(product);
+
+    }
 }
