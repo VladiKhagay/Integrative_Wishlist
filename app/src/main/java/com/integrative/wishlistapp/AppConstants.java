@@ -2,7 +2,7 @@ package com.integrative.wishlistapp;
 
 public class AppConstants {
 
-    public static final String BASE_URL = "http://172.20.10.3:8080";
+    public static final String BASE_URL = "http://10.100.102.14:8080";
 
     // Instance types
     public static final String WISHLIST = "Wishlist";
@@ -16,7 +16,11 @@ public class AppConstants {
     // Activities types
     public static final String CLICK = "Click";
     public static final String WATCH = "Watch";
+    public static final String REMOVE_CLICK = "Remove product";
+    public static final String ADD_CLICK = "Add Product";
+    public static final String OPEN_SHOP = "Open Shop";
 
+    //
 
 
 }

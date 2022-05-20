@@ -36,8 +36,8 @@ public class Location {
     @Override
     public String toString() {
         return "Location{" +
-                "lat=" + lat +
-                ", lng=" + lng +
+                "\"lat\":" + lat +
+                ", \"lng\":" + lng +
                 '}';
     }
 }

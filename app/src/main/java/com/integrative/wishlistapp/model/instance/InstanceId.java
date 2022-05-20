@@ -36,8 +36,8 @@ public class InstanceId {
     @Override
     public String toString() {
         return "InstanceId{" +
-                "domain='" + domain + '\'' +
-                ", id='" + id + '\'' +
+                "\"domain\":" + '\"' + domain + '\"' +
+                ", \"id\":" + '\"'+ id + '\"' +
                 '}';
     }
 }

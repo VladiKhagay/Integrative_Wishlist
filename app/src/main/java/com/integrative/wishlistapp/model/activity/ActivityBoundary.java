@@ -84,12 +84,12 @@ public class ActivityBoundary {
     @Override
     public String toString() {
         return "ActivityBoundary{" +
-                "activityId=" + activityId +
-                ", type='" + type + '\'' +
-                ", instance=" + instance +
-                ", createdTimestamp=" + createdTimestamp +
-                ", invokedBy=" + invokedBy +
-                ", activityAttributes=" + activityAttributes +
+                activityId  +
+                ", \"type\":" +'\"'+ type + '\"' +
+                ", "  + instance  +
+                ", \"createdTimestamp\":" + '\"' + createdTimestamp + '\"'+
+                ", " + invokedBy +
+                ", \"activityAttributes\":" + activityAttributes +
                 '}';
     }
 }

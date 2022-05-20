@@ -1,7 +1,5 @@
 package com.integrative.wishlistapp.manager;
 
-import android.util.Log;
-
 import com.integrative.wishlistapp.AppConstants;
 import com.integrative.wishlistapp.model.Product;
 import com.integrative.wishlistapp.model.Shop;
@@ -27,15 +25,19 @@ public class DataManager {
     private Map<String , Shop> shopsMap;
     private Map<String, Wishlist> wishlistMap;
     private Wishlist currentWishlist;
+    private InstanceBoundary activeInstance;
 
     private UserBoundary userBoundary;
     private List<InstanceBoundary> instanceBoundaries;
     private List<ActivityBoundary> activityBoundaries;
+    private String managerEmail = "Dima@gogo.com";
+
     private DataManager () {
         user = new User();
         shopsMap = new HashMap<>();
         wishlistMap = new HashMap<>();
         currentWishlist = new Wishlist();
+        activeInstance = new InstanceBoundary();
         userBoundary = new UserBoundary();
 
         /* Dummy User */
@@ -55,6 +57,7 @@ public class DataManager {
         }
         return instance;
     }
+
 
     public User getUser() {
         return user;
@@ -86,6 +89,14 @@ public class DataManager {
 
     public void setCurrentWishlist(Wishlist currentWishlist) {
         this.currentWishlist = currentWishlist;
+    }
+
+    public InstanceBoundary getActiveInstance() {
+        return activeInstance;
+    }
+
+    public void setActiveInstance(InstanceBoundary activeInstance) {
+        this.activeInstance = activeInstance;
     }
 
     public UserBoundary getUserBoundary() {
@@ -169,5 +180,9 @@ public class DataManager {
         if (shop != null) {
             this.shopsMap.put(shop.getProducts().get(0).getCategory(), shop);
         }
+    }
+
+    public String getManagerEmail() {
+        return this.managerEmail;
     }
 }

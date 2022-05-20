@@ -4,7 +4,6 @@ import android.util.Log;
 
 import androidx.lifecycle.MutableLiveData;
 
-import com.integrative.wishlistapp.apis.InstancesService;
 import com.integrative.wishlistapp.apis.UsersService;
 import com.integrative.wishlistapp.manager.DataManager;
 import com.integrative.wishlistapp.model.user.NewUserBoundary;

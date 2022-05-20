@@ -10,9 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.integrative.wishlistapp.R;
-import com.integrative.wishlistapp.mOnClickListener;
 import com.integrative.wishlistapp.model.Product;
-import com.integrative.wishlistapp.viewmodel.ShopViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +18,7 @@ import java.util.List;
 public class ShopAdapter  extends RecyclerView.Adapter<ShopAdapter.ShopViewHolder> {
 
     private List<Product> products = new ArrayList<>();
-    private mOnClickListener listener;
+
 
     public  interface ShopActionsHandler{
         void onAddClicked (Product product);

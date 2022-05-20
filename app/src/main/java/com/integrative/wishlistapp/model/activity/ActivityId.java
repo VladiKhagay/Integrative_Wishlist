@@ -36,8 +36,8 @@ public class ActivityId {
     @Override
     public String toString() {
         return "ActivityId{" +
-                "domain='" + domain + '\'' +
-                ", id='" + id + '\'' +
+                "\"domain\":"+ '\"' + domain + '\"' +
+                ", \"id:\"" + '\"'+ id + '\"' +
                 '}';
     }
 }

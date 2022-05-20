@@ -58,10 +58,10 @@ public class NewUserBoundary {
     @Override
     public String toString() {
         return "NewUserBoundary{" +
-                "email='" + email + '\'' +
-                ", role='" + role + '\'' +
-                ", username='" + username + '\'' +
-                ", avatar='" + avatar + '\'' +
+                "\"email\":" + '\"' +email + '\"' +
+                ", \"role\":" + '\"' +role + '\"' +
+                ", \"username\"" + '\"' +username + '\"' +
+                ", \"avatar\":" +'\"' + avatar + '\"' +
                 '}';
     }
 }

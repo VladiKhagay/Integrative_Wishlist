@@ -19,13 +19,19 @@ import com.integrative.wishlistapp.apis.RetrofitService;
 import com.integrative.wishlistapp.manager.DataManager;
 import com.integrative.wishlistapp.model.Product;
 import com.integrative.wishlistapp.model.Shop;
+import com.integrative.wishlistapp.model.activity.Instance;
+import com.integrative.wishlistapp.model.activity.InvokedBy;
+import com.integrative.wishlistapp.model.instance.InstanceBoundary;
 import com.integrative.wishlistapp.model.user.UserBoundary;
 import com.integrative.wishlistapp.repository.InstancesRepository;
 import com.integrative.wishlistapp.viewmodel.ShopViewModel;
 import com.integrative.wishlistapp.viewmodel.WishlistViewModel;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ShopActivity extends AppCompatActivity {
 
@@ -38,8 +44,6 @@ public class ShopActivity extends AppCompatActivity {
 
     private MyApplication app;
 
-    private mOnClickListener listener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,23 +52,12 @@ public class ShopActivity extends AppCompatActivity {
 
         getSupportActionBar().hide();
 
-        this.listener = new mOnClickListener() {
-            @Override
-            public void onAddClicked(Product product) {
-                // do nothing
-            }
-
-            @Override
-            public void onDeleteClicked(Product product) {
-
-            }
-        };
 
         goToWishlistButton = findViewById(R.id.shop_activity_button_back);
         shopsList = new ArrayList<>();
 
         shopViewModel = new ViewModelProvider(this).get(ShopViewModel.class);
-        shopViewModel.init(app.getInstancesRepository());
+        shopViewModel.init(app.getInstancesRepository(), app.getActivitiesRepository());
 
         tabLayout = findViewById(R.id.shop_activity_tab_layout);
         viewPager2 = findViewById(R.id.shop_activity_viewpager);
@@ -115,4 +108,6 @@ public class ShopActivity extends AppCompatActivity {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
+
+
 }

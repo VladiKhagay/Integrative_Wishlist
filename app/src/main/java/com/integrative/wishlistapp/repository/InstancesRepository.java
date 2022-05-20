@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.lifecycle.MutableLiveData;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.integrative.wishlistapp.apis.InstancesService;
 import com.integrative.wishlistapp.manager.DataManager;
@@ -13,7 +14,6 @@ import com.integrative.wishlistapp.model.Shop;
 import com.integrative.wishlistapp.model.Wishlist;
 import com.integrative.wishlistapp.model.instance.InstanceBoundary;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -125,7 +125,13 @@ public class InstancesRepository {
     }
 
     public void updateInstance(InstanceBoundary instanceBoundary) {
-        service.updateInstance(instanceBoundary).enqueue(new Callback<InstanceBoundary>() {
+        String instanceDomain = instanceBoundary.getInstanceId().getDomain();
+        String instanceId = instanceBoundary.getInstanceId().getId();
+//        String userDomain = DataManager.getInstance().getUserBoundary().getUserId().getDomain();
+        String userDomain = "2022b.timor.bystritskie";
+//        String userEmail = DataManager.getInstance().getManagerEmail();
+        String userEmail = "Dima@gogo.com";
+        service.updateInstance(instanceBoundary, instanceDomain, instanceId, userDomain, userEmail).enqueue(new Callback<InstanceBoundary>() {
             @Override
             public void onResponse(Call<InstanceBoundary> call, Response<InstanceBoundary> response) {
                 Log.d(TAG, "updateInstance onResponse:: " + response);
@@ -245,12 +251,17 @@ public class InstancesRepository {
                         if (instanceBoundary.getCreatedBy().getUserId().getDomain().equals(userDomain)
                                 && instanceBoundary.getCreatedBy().getUserId().getEmail().equals(userEmail)) {
                             dataManager.getInstanceBoundaries().add(instanceBoundary);
-                            Gson gson = new Gson();
+                            dataManager.setActiveInstance(instanceBoundary);
+                            Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").create();
                             JsonElement jsonElement = gson.toJsonTree(instanceBoundary.getInstanceAttributes());
+                            Log.d(TAG, "retrieveWishlist result:: " + gson.toJson(instanceBoundary));
+
                             dataManager.addWishlist(gson.fromJson(jsonElement, Wishlist.class));
                             dataManager.setCurrentWishlist(gson.fromJson(jsonElement, Wishlist.class));
+
                         }
                     }
+                    Log.d(TAG, "retrieveWishlist result:: " + response.body());
                     wishlists.postValue(dataManager.getWishlistMap());
                     currentWishList.postValue(dataManager.getCurrentWishlist());
 
@@ -277,6 +288,8 @@ public class InstancesRepository {
                         dataManager.getInstanceBoundaries().add(instanceBoundary);
                         Gson gson = new Gson();
                         JsonElement jsonElement = gson.toJsonTree(instanceBoundary.getInstanceAttributes());
+                        Shop shop = gson.fromJson(jsonElement, Shop.class);
+                        shop.setName(instanceBoundary.getName());
                         dataManager.addShop(gson.fromJson(jsonElement, Shop.class));
 
 

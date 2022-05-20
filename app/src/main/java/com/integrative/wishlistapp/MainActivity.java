@@ -20,6 +20,8 @@ import com.integrative.wishlistapp.databinding.ActivityMainBinding;
 import com.integrative.wishlistapp.manager.DataManager;
 import com.integrative.wishlistapp.model.Product;
 import com.integrative.wishlistapp.model.Wishlist;
+import com.integrative.wishlistapp.model.activity.Instance;
+import com.integrative.wishlistapp.model.activity.InvokedBy;
 import com.integrative.wishlistapp.model.instance.CreatedBy;
 import com.integrative.wishlistapp.model.instance.InstanceBoundary;
 import com.integrative.wishlistapp.model.instance.InstanceId;
@@ -34,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements WishlistAdapter.WishlistActionsHandler {
 
@@ -45,28 +48,11 @@ public class MainActivity extends AppCompatActivity implements WishlistAdapter.W
     private Button goToWishlistButton;
     private TextView totalPriceTextView;
 
-    private mOnClickListener listener;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         app = (MyApplication) getApplication();
-
-        // create listener for the adapter
-        this.listener = new mOnClickListener() {
-
-            @Override
-            public void onAddClicked(Product product) {
-                // do nothing
-            }
-
-            @Override
-            public void onDeleteClicked(Product product) {
-                Log.d(TAG, "onDeleteClicked:: " + product);
-                viewModel.removeProductFromWishlist(product);
-            }
-        };
 
         // remove top bar
         getSupportActionBar().hide();
@@ -82,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements WishlistAdapter.W
 
         //Setup View model
         viewModel = new ViewModelProvider(this).get(WishlistViewModel.class);
-        viewModel.init(app.getInstancesRepository());
+        viewModel.init(app.getInstancesRepository(), app.getActivitiesRepository());
 
         // Setup recycler view adapter
         rv.setAdapter(adapter);
@@ -106,6 +92,12 @@ public class MainActivity extends AppCompatActivity implements WishlistAdapter.W
         });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        viewModel.UpdateChangesInDB();
+    }
+
     private void setUpButtons() {
 
         goToShopButton.setOnClickListener(new View.OnClickListener() {
@@ -126,6 +118,31 @@ public class MainActivity extends AppCompatActivity implements WishlistAdapter.W
     @Override
     public void onDeleteClicked(Product product) {
         viewModel.removeProductFromWishlist(product);
+        invokeActivity(AppConstants.REMOVE_CLICK, product);
+
+    }
+
+
+    private void invokeActivity (String type, Product product) {
+
+        Instance instance = new Instance();
+        Date createdTimeStamp = new Date();
+        Map<String,Object> attributes = new HashMap<>();
+        InvokedBy invokedBy = new InvokedBy(DataManager.getInstance().getUserBoundary().getUserId());
+
+
+        List<InstanceBoundary> instanceBoundaryList = DataManager.getInstance().getInstanceBoundaries();
+
+        for (InstanceBoundary instanceBoundary : instanceBoundaryList) {
+            if (instanceBoundary.getCreatedBy().getUserId().equals(DataManager.getInstance().getUserBoundary().getUserId())) {
+                instance.setInstanceId(instanceBoundary.getInstanceId());
+            }
+        }
+
+        attributes.put(Product.class.getSimpleName(), product);
+
+
+        viewModel.invokeActivity(type,invokedBy, instance, createdTimeStamp,attributes);
 
     }
 }

@@ -59,4 +59,6 @@ public class MyApplication extends Application {
     public ActivitiesRepository getActivitiesRepository() {
         return activitiesRepository;
     }
+
+
 }

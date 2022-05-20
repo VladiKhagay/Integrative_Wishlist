@@ -4,9 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Map;
 
@@ -21,6 +18,7 @@ public class InstanceBoundary implements Serializable {
     private String name;
     @SerializedName("active")
     private Boolean active;
+    @Expose
     @SerializedName("createdTimestamp")
     private Date createdTimestamp;
     @SerializedName("createdBy")
@@ -113,14 +111,14 @@ public class InstanceBoundary implements Serializable {
     @Override
     public String toString() {
         return "InstanceBoundary{" +
-                "instanceId=" + instanceId +
-                ", type='" + type + '\'' +
-                ", name='" + name + '\'' +
-                ", active=" + active +
-                ", createdTimestamp=" + createdTimestamp +
-                ", createdBy=" + createdBy +
-                ", location=" + location +
-                ", instanceAttributes=" + instanceAttributes +
+                 instanceId +
+                ", \"type\":" +'\"' +  type + '\"' +
+                ", \"name\":" +'\"' + name + '\"' +
+                ", \"active\":" + active +
+                ", \"createdTimestamp\":" + createdTimestamp +
+                "," + createdBy +
+                "," +location +
+                ", \"instanceAttributes\":" + instanceAttributes +
                 '}';
     }
 }

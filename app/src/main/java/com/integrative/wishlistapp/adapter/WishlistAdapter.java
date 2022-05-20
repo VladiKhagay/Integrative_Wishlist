@@ -1,6 +1,5 @@
 package com.integrative.wishlistapp.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,9 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.integrative.wishlistapp.MainActivity;
 import com.integrative.wishlistapp.R;
-import com.integrative.wishlistapp.mOnClickListener;
 import com.integrative.wishlistapp.model.Product;
 
 import java.util.ArrayList;

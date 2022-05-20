@@ -2,6 +2,8 @@ package com.integrative.wishlistapp.model.user;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Objects;
+
 public class UserId {
 
     @SerializedName("email")
@@ -33,8 +35,21 @@ public class UserId {
     @Override
     public String toString() {
         return "UserId{" +
-                "email='" + email + '\'' +
-                ", domain='" + domain + '\'' +
+                "\"email\":" + '\"' + email + '\"' +
+                ", \"domain\":" + '\"' + domain + '\"' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserId userId = (UserId) o;
+        return Objects.equals(email, userId.email) && Objects.equals(domain, userId.domain);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email, domain);
     }
 }
