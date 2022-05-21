@@ -99,7 +99,6 @@ public class WishlistViewModel extends AndroidViewModel {
 
     public void UpdateChangesInDB() {
 
-
         String wishlistJson =gson.toJson(DataManager.getInstance().getCurrentWishlist());
         Map<String , Object> wishlistAsMap = gson.fromJson(wishlistJson, mapType);
         DataManager.getInstance().getActiveInstance().setInstanceAttributes(wishlistAsMap);

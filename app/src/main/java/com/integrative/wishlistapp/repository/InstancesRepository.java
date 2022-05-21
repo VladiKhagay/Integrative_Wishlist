@@ -127,9 +127,8 @@ public class InstancesRepository {
     public void updateInstance(InstanceBoundary instanceBoundary) {
         String instanceDomain = instanceBoundary.getInstanceId().getDomain();
         String instanceId = instanceBoundary.getInstanceId().getId();
-//        String userDomain = DataManager.getInstance().getUserBoundary().getUserId().getDomain();
+        instanceBoundary.setCreatedTimestamp(null);
         String userDomain = "2022b.timor.bystritskie";
-//        String userEmail = DataManager.getInstance().getManagerEmail();
         String userEmail = "Dima@gogo.com";
         service.updateInstance(instanceBoundary, instanceDomain, instanceId, userDomain, userEmail).enqueue(new Callback<InstanceBoundary>() {
             @Override

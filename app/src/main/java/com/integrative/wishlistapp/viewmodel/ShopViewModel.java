@@ -7,6 +7,9 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.integrative.wishlistapp.manager.DataManager;
 import com.integrative.wishlistapp.model.Product;
 import com.integrative.wishlistapp.model.Shop;
@@ -19,6 +22,7 @@ import com.integrative.wishlistapp.model.user.UserId;
 import com.integrative.wishlistapp.repository.ActivitiesRepository;
 import com.integrative.wishlistapp.repository.InstancesRepository;
 
+import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +33,9 @@ public class ShopViewModel extends AndroidViewModel {
     private MutableLiveData<Map<String,Shop>> shops;
     private ActivityBoundary activityBoundary;
 
+    private Gson gson;
+    private Type mapType;
+
     public ShopViewModel(@NonNull Application application) {
         super(application);
     }
@@ -38,6 +45,11 @@ public class ShopViewModel extends AndroidViewModel {
         this.activitiesRepository = activitiesRepository;
         this.shops = repository.getShops();
         this.activityBoundary = new ActivityBoundary();
+
+        gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+                .create();
+        mapType = new TypeToken<Map<String,Object>>(){}.getType();
     }
 
     public void retrieveShops (String type, String userDomain, String userEmail, int size, int page) {
@@ -65,5 +77,14 @@ public class ShopViewModel extends AndroidViewModel {
         this.activityBoundary.setActivityAttributes(attributes);
         this.activitiesRepository.invoke(this.activityBoundary);
 
+    }
+
+    public void UpdateChangesInDB() {
+
+        String wishlistJson =gson.toJson(DataManager.getInstance().getCurrentWishlist());
+        Map<String , Object> wishlistAsMap = gson.fromJson(wishlistJson, mapType);
+        DataManager.getInstance().getActiveInstance().setInstanceAttributes(wishlistAsMap);
+
+        repository.updateInstance(DataManager.getInstance().getActiveInstance());
     }
 }

@@ -31,8 +31,6 @@ public class MyApplication extends Application {
     private ActivitiesRepository activitiesRepository;
 
 
-
-
     @Override
     public void onCreate() {
         super.onCreate();

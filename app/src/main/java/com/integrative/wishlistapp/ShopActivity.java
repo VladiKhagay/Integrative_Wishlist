@@ -67,9 +67,15 @@ public class ShopActivity extends AppCompatActivity {
         setUpButtons();
 
         UserBoundary userBoundary = DataManager.getInstance().getUserBoundary();
-        if (DataManager.getInstance().getShopsMap().isEmpty()) {
+//        if (DataManager.getInstance().getShopsMap().isEmpty()) {
             shopViewModel.retrieveShops(AppConstants.SHOP, userBoundary.getUserId().getDomain(), userBoundary.getUserId().getEmail(), 15, 0);
-        }
+//        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        shopViewModel.UpdateChangesInDB();
     }
 
     private void initViews() {

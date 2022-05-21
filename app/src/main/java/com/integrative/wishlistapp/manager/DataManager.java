@@ -44,7 +44,6 @@ public class DataManager {
         userBoundary.setUsername("Sierra");
         userBoundary.setUserId(new UserId("Asaf@gogo.com","2022b.timor.bystritskie"));
         userBoundary.setAvatar("ASF");
-        userBoundary.setRole(AppConstants.MANAGER);
 
 
         instanceBoundaries = new ArrayList<>();

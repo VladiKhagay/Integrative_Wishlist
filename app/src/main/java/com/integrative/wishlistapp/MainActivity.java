@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements WishlistAdapter.W
 
             viewModel.searchWishlist(AppConstants.WISHLIST, temp.getUserId().getDomain(), temp.getUserId().getEmail(), 20, 0);
         }
+
+        Log.d(TAG, "onCreate:: Completed");
     }
 
     @Override
@@ -90,12 +92,16 @@ public class MainActivity extends AppCompatActivity implements WishlistAdapter.W
             Log.d("MainActivitytest", "temp user = " + wishlist.toString());
             adapter.setProducts(wishlist.getProducts());
         });
+
+        Log.d(TAG, "OnResume:: ");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         viewModel.UpdateChangesInDB();
+        Log.d(TAG, "OnPause:: ");
+
     }
 
     private void setUpButtons() {
@@ -143,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements WishlistAdapter.W
 
 
         viewModel.invokeActivity(type,invokedBy, instance, createdTimeStamp,attributes);
+        Log.d(TAG, "invokeActivity:: Type = " + type + ", Invoked By = " + invokedBy + ", Attributes = " + attributes);
 
     }
 }
