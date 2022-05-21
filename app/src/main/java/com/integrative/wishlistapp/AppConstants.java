@@ -2,7 +2,7 @@ package com.integrative.wishlistapp;
 
 public class AppConstants {
 
-    public static final String BASE_URL = "http://10.100.102.14:8080";
+    public static final String BASE_URL = "http://{YOUR_LOCAL_IP_ADRESS}";
 
     // Instance types
     public static final String WISHLIST = "Wishlist";
