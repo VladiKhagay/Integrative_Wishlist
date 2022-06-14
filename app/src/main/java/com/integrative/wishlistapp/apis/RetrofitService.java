@@ -15,9 +15,9 @@ public class RetrofitService {
     public static Retrofit getInstance() {
         if (instance == null) {
             instance = new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
+                    .baseUrl(BASE_URL + "/")
                     .addConverterFactory(GsonConverterFactory.create(new GsonBuilder()
-                            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSX")
+                            .setDateFormat("yyyy-MM-dd HH:mm:ss")
                             .create()))
                     .build();
         }

@@ -89,6 +89,9 @@ public class MainActivity extends AppCompatActivity implements WishlistAdapter.W
     protected void onResume() {
         super.onResume();
         viewModel.getCurrWishlistLiveData().observe(this, wishlist -> {
+            while (wishlist == null) {
+
+            }
             Log.d("MainActivitytest", "temp user = " + wishlist.toString());
             adapter.setProducts(wishlist.getProducts());
         });

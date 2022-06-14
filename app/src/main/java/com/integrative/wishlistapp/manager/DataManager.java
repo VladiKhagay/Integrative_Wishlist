@@ -40,10 +40,10 @@ public class DataManager {
         activeInstance = new InstanceBoundary();
         userBoundary = new UserBoundary();
 
-        /* Dummy User */
-        userBoundary.setUsername("Sierra");
-        userBoundary.setUserId(new UserId("Asaf@gogo.com","2022b.timor.bystritskie"));
-        userBoundary.setAvatar("ASF");
+//        /* Dummy User */
+//        userBoundary.setUsername("Sierra");
+//        userBoundary.setUserId(new UserId("Asaf@gogo.com","2022b.timor.bystritskie"));
+//        userBoundary.setAvatar("ASF");
 
 
         instanceBoundaries = new ArrayList<>();

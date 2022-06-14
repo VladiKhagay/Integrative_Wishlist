@@ -7,13 +7,22 @@ import androidx.lifecycle.MutableLiveData;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.integrative.wishlistapp.AppConstants;
+import com.integrative.wishlistapp.MyApplication;
 import com.integrative.wishlistapp.apis.InstancesService;
 import com.integrative.wishlistapp.manager.DataManager;
 import com.integrative.wishlistapp.model.Product;
 import com.integrative.wishlistapp.model.Shop;
 import com.integrative.wishlistapp.model.Wishlist;
+import com.integrative.wishlistapp.model.instance.CreatedBy;
 import com.integrative.wishlistapp.model.instance.InstanceBoundary;
+import com.integrative.wishlistapp.model.instance.InstanceId;
+import com.integrative.wishlistapp.model.instance.Location;
+import com.integrative.wishlistapp.model.user.UserId;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -111,14 +120,14 @@ public class InstancesRepository {
                 if (response.body() != null) {
                     createdInstance.postValue(response.body());
                     dataManager.getInstanceBoundaries().add(response.body());
-                    Log.d(TAG, "createInstance result:: " + response.body());
                 }
             }
 
             @Override
             public void onFailure(Call<InstanceBoundary> call, Throwable t) {
                 createdInstance.postValue(null);
-                Log.e(TAG, "createInstance retrieveInstance:: " + t.getMessage());
+                Log.e(TAG, "createInstance retrieveInstance:: " + t.getMessage() );
+
             }
         });
 
@@ -260,7 +269,7 @@ public class InstancesRepository {
 
                         }
                     }
-                    Log.d(TAG, "retrieveWishlist result:: " + response.body());
+                    Log.d(TAG, "retrieveWishlist response:: " + response.body());
                     wishlists.postValue(dataManager.getWishlistMap());
                     currentWishList.postValue(dataManager.getCurrentWishlist());
 
@@ -270,6 +279,7 @@ public class InstancesRepository {
             @Override
             public void onFailure(Call<List<InstanceBoundary>> call, Throwable t) {
                 wishlists.postValue(null);
+                t.printStackTrace();
                 Log.e(TAG, "retrieveWishlist onFailure:: " + t.getMessage());
             }
         });
@@ -290,8 +300,6 @@ public class InstancesRepository {
                         Shop shop = gson.fromJson(jsonElement, Shop.class);
                         shop.setName(instanceBoundary.getName());
                         dataManager.addShop(gson.fromJson(jsonElement, Shop.class));
-
-
                     }
                     shops.postValue(dataManager.getShopsMap());
                 }

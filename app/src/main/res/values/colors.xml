@@ -9,4 +9,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="red_a700">#D50000</color>
     <color name="green_800">#09af00</color>
+    <color name="smoky_black">#080000</color>
+    <color name="bran_red">#7B0A0A</color>
+    <color name="orange_engineering">#BB0C0C</color>
+    <color name="lava">#CF1B1B</color>
 </resources>
